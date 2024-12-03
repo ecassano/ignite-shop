@@ -16,23 +16,21 @@ import {
   DrawerContentSummary,
   DrawerContentItemsContainer,
 } from "./styles";
-import { CartContext, useCart } from "../../contexts/cart";
+import { CartContext } from "../../contexts/cart";
 import axios from "axios";
 
 const Header = () => {
-  const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] =
-    useState(false);
-  const { cartItems } = useContext(CartContext);
-
+  // const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] =
+  // useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
+  const { cartItems } = useContext(CartContext);
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
   };
 
   const handleCheckout = async () => {
-    const { cartItems } = useCart(); // Pega os itens do carrinho do contexto
-
     if (cartItems.length === 0) {
       alert("O carrinho está vazio!");
       return;
@@ -41,7 +39,7 @@ const Header = () => {
     try {
       const response = await axios.post("/api/checkout", {
         items: cartItems.map((item) => ({
-          price: item.id, // ID do preço no Stripe
+          price: item.priceId, // ID do preço no Stripe
           quantity: item.quantity, // Quantidade
         })),
       });
@@ -89,9 +87,9 @@ const Header = () => {
             <h2>Sacola de compras</h2>
             <DrawerContentItemsContainer>
               {cartItems.map((item) => (
-                <DrawerContentItem>
+                <DrawerContentItem key={item.id}>
                   <DrawerContentItemImageContainer>
-                    <Image width={100} height={100} src={item.imageUrl} />
+                    <Image width={100} height={100} src={item.imageUrl} alt={`Imagem do item item.name`} />
                   </DrawerContentItemImageContainer>
                   <DrawerContentItemInfoContainer>
                     <div>
